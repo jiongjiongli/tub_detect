@@ -32,10 +32,11 @@ class TensorboardLogger:
 
 def main():
     repo_dir_path = Path('/project/train/src_repo')
-    model_file_path = repo_dir_path / 'yolov8n.pt'
+    # model_file_path = repo_dir_path / 'yolov8n.pt'
     data_root_path = Path(r'/home/data')
     dataset_config_file_path = data_root_path / 'custom_dataset.yaml'
     model_save_dir_path = '/project/train/models'
+    model_file_path = model_save_dir_path / 'train/weights/last.pth'
     font_file_names = ['Arial.ttf']
     log_file_path = '/project/train/log/log.txt'
 
@@ -61,6 +62,8 @@ def main():
         data=dataset_config_file_path.as_posix(),
         batch=16,
         seed=7,
+        resume=True,
+        epochs=150,
         project=model_save_dir_path)
 
 
