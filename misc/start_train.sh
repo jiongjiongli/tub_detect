@@ -3,7 +3,6 @@ cd /project/train/src_repo/tub_detect
 export PYTHONPATH=$PYTHONPATH:/project/train/src_repo/tub_detect
 
 echo 'Reset env...'
-rm -rf /project/train/models/*
 mkdir -p /project/train/models
 rm -rf /project/train/tensorboard/*
 mkdir -p /project/train/tensorboard
