@@ -21,11 +21,6 @@ class TensorboardLogger:
             tensorboard_log_dir_path = Path('/project/train/tensorboard')
             tensorboard_log_dir_path.mkdir(parents=True, exist_ok=True)
             self.writer = SummaryWriter(tensorboard_log_dir_path.as_posix())
-            model_save_dir_path = Path('/project/train/models')
-            model_save_dir_path = model_save_dir_path / 'train/weights'
-            model_save_dir_path.mkdir(parents=True, exist_ok=True)
-            trainer.last = model_save_dir_path / 'last.pt'
-            trainer.best = model_save_dir_path / 'best.pt'
 
     def on_batch_end(self, trainer):
         self._log_scalars(trainer.label_loss_items(trainer.tloss, prefix="train"), trainer.epoch + 1)
@@ -34,6 +29,17 @@ class TensorboardLogger:
     def on_fit_epoch_end(self, trainer):
         self._log_scalars(trainer.metrics, trainer.epoch + 1)
 
+        # Copy images such as PR curve.
+        model_save_dir_path = Path('/project/train/models')
+        result_graphs_dir_path = Path('/project/train/result-graphs')
+        file_paths = model_save_dir_path.rglob('*.*')
+
+        for file_path in file_paths:
+            if file_path.suffix in ['.png', '.jpg']:
+                dest_file_path = result_graphs_dir_path / file_path.relative_to(model_save_dir_path)
+                dest_file_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(file_path, dest_file_path)
+
 
 def main():
     repo_dir_path = Path('/project/train/src_repo')
@@ -41,7 +47,7 @@ def main():
     data_root_path = Path(r'/home/data')
     dataset_config_file_path = data_root_path / 'custom_dataset.yaml'
     model_save_dir_path = Path('/project/train/models')
-    model_file_path = model_save_dir_path / 'train/weights/last.pt'
+    model_file_path = model_save_dir_path  / 'train/weights' / 'last.pt'
     result_graphs_dir_path = Path('/project/train/result-graphs')
     font_file_names = ['Arial.ttf']
     log_file_path = Path('/project/train/log/log.txt')
@@ -57,6 +63,8 @@ def main():
     tb_callbacks['on_fit_epoch_end'] = tb_logger.on_fit_epoch_end
     tb_callbacks['on_batch_end'] = tb_logger.on_batch_end
 
+    result_graphs_dir_path.mkdir(parents=True, exist_ok=True)
+
     for font_file_name in font_file_names:
         font_file_path = repo_dir_path / font_file_name
         dest_file_path = USER_CONFIG_DIR / font_file_name
@@ -70,7 +78,7 @@ def main():
         seed=7,
         resume=True,
         epochs=150,
-        project=result_graphs_dir_path.as_posix())
+        project=model_save_dir_path.as_posix())
 
 
 if __name__ == '__main__':
