@@ -41,7 +41,7 @@ def main():
     data_root_path = Path(r'/home/data')
     dataset_config_file_path = data_root_path / 'custom_dataset.yaml'
     model_save_dir_path = Path('/project/train/models')
-    model_file_path = model_save_dir_path / 'train/weights/last.pth'
+    model_file_path = model_save_dir_path / 'train/weights/last.pt'
     result_graphs_dir_path = Path('/project/train/result-graphs')
     font_file_names = ['Arial.ttf']
     log_file_path = Path('/project/train/log/log.txt')
