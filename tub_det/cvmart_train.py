@@ -21,6 +21,11 @@ class TensorboardLogger:
             tensorboard_log_dir_path = Path('/project/train/tensorboard')
             tensorboard_log_dir_path.mkdir(parents=True, exist_ok=True)
             self.writer = SummaryWriter(tensorboard_log_dir_path.as_posix())
+            model_save_dir_path = Path('/project/train/models')
+            model_save_dir_path = model_save_dir_path / 'train/weights'
+            model_save_dir_path.mkdir(parents=True, exist_ok=True)
+            trainer.last = model_save_dir_path / 'last.pt'
+            trainer.best = model_save_dir_path / 'best.pt'
 
     def on_batch_end(self, trainer):
         self._log_scalars(trainer.label_loss_items(trainer.tloss, prefix="train"), trainer.epoch + 1)
@@ -35,12 +40,13 @@ def main():
     # model_file_path = repo_dir_path / 'yolov8n.pt'
     data_root_path = Path(r'/home/data')
     dataset_config_file_path = data_root_path / 'custom_dataset.yaml'
-    model_save_dir_path = '/project/train/models'
+    model_save_dir_path = Path('/project/train/models')
     model_file_path = model_save_dir_path / 'train/weights/last.pth'
+    result_graphs_dir_path = Path('/project/train/result-graphs')
     font_file_names = ['Arial.ttf']
-    log_file_path = '/project/train/log/log.txt'
+    log_file_path = Path('/project/train/log/log.txt')
 
-    file_handler = logging.FileHandler(log_file_path, mode='a')
+    file_handler = logging.FileHandler(log_file_path.as_posix(), mode='a')
     file_handler.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(module)s %(funcName)s %(message)s')
     file_handler.setFormatter(formatter)
@@ -64,7 +70,7 @@ def main():
         seed=7,
         resume=True,
         epochs=150,
-        project=model_save_dir_path)
+        project=result_graphs_dir_path.as_posix())
 
 
 if __name__ == '__main__':

@@ -3,9 +3,14 @@ cd /project/train/src_repo/tub_detect
 export PYTHONPATH=$PYTHONPATH:/project/train/src_repo/tub_detect
 
 echo 'Reset env...'
-rm -rf /project/train/models
-rm -rf /project/train/tensorboard
-rm -f /project/train/log/log.txt
+rm -rf /project/train/models/*
+mkdir -p /project/train/models
+rm -rf /project/train/tensorboard/*
+mkdir -p /project/train/tensorboard
+rm -rf /project/train/log/*
+mkdir -p /project/train/log
+rm -rf /project/train/result-graphs/*
+mkdir -p /project/train/result-graphs
 
 echo 'Start data_analyzer...'
 python misc/data_analyzer.py
